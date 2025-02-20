@@ -9,8 +9,8 @@ import lombok.ToString;
 import java.io.Serializable;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Table(name = "users")
 @ToString
