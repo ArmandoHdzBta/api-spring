@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -28,4 +29,12 @@ public class User implements Serializable {
 
     @Column(name = "email", unique = true)
     private String email;
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
+    //Relationship
+    /* @OneToMany(fetch = FetchType.LAZY, targetEntity = Task.class, cascade = CascadeType.ALL)
+    private List<Task> tasks;
+     */
 }

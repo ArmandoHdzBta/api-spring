@@ -1,6 +1,7 @@
 package com.nando.apiExample.controller;
 
 import com.nando.apiExample.controller.http.DataResponse;
+import com.nando.apiExample.controller.http.SimpleResponse;
 import com.nando.apiExample.model.dto.UserDto;
 import com.nando.apiExample.model.entity.User;
 import com.nando.apiExample.service.UserService;
@@ -20,7 +21,7 @@ public class UserController extends Controller {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<DataResponse<List<UserDto>>> getAllUsers() {
+    public ResponseEntity<?> getAllUsers() {
         try {
             DataResponse<List<UserDto>> response = new DataResponse<>("User list", this.userService.findAll());
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -30,21 +31,17 @@ public class UserController extends Controller {
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<DataResponse<UserDto>> getUser(@PathVariable Integer id) {
+    public ResponseEntity<?> getUser(@PathVariable Integer id) {
         try {
-            DataResponse<UserDto> response = new DataResponse<>("User find", this.userService.getUserById(id));
+            UserDto user = this.userService.getUserById(id);
+
+            if(user == null) {
+                return new ResponseEntity<>(new SimpleResponse("User not found"), HttpStatus.BAD_REQUEST);
+            }
+
+            DataResponse<UserDto> response = new DataResponse<>("User find", user);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (ResponseStatusException ex) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @PostMapping("/user")
-    public ResponseEntity<DataResponse<UserDto>> saveUser(@RequestBody UserDto user) {
-        try {
-            DataResponse<UserDto> response = new DataResponse<>("User created", this.userService.save(user));
-            return new ResponseEntity<>(response, HttpStatus.CREATED) ;
-        } catch(ResponseStatusException ex){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

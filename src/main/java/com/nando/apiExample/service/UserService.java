@@ -3,6 +3,7 @@ package com.nando.apiExample.service;
 import com.nando.apiExample.model.dao.IUserDao;
 import com.nando.apiExample.model.dto.UserDto;
 import com.nando.apiExample.model.entity.User;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,32 +23,33 @@ public class UserService implements IUser {
     public List<UserDto> findAll() {
         List<User> userList = this.userDao.findAll();
         return userList.stream()
-                .map(user -> new UserDto(
-                        user.getId(),
-                        user.getName(),
-                        user.getLastName(),
-                        user.getEmail()
-                ))
+                .map(user -> {
+                    UserDto userDto = new UserDto();
+                    userDto.setId(user.getId());
+                    userDto.setName(user.getName());
+                    userDto.setLastName(user.getLastName());
+                    userDto.setEmail(user.getEmail());
+                    return userDto;
+                })
                 .collect(Collectors.toList());
-    }
-
-    @Transactional
-    @Override
-    public UserDto save(UserDto user) {
-        User userEntity = new User();
-        userEntity.setName(user.getName());
-        userEntity.setLastName(user.getLastName());
-        userEntity.setEmail(user.getEmail());
-
-        User savedUser = this.userDao.save(userEntity);
-        return new UserDto(savedUser.getId(), savedUser.getName(), savedUser.getLastName(), savedUser.getEmail());
     }
 
     @Transactional(readOnly = true)
     @Override
     public UserDto getUserById(Integer id) {
         User user = this.userDao.findById(id).orElse(null);
-        return new UserDto(user.getId(), user.getName(), user.getLastName(), user.getEmail());
+
+        if(user == null) {
+            return null;
+        }
+
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setName(user.getName());
+        userDto.setLastName(user.getLastName());
+        userDto.setEmail(user.getEmail());
+
+        return userDto;
     }
 
     @Transactional(readOnly = true)

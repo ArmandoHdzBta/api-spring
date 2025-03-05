@@ -11,4 +11,5 @@ public interface IUserDao extends CrudRepository<User, Integer> {
     @Override
     List<User> findAll();
     User save(UserDto userDto);
+    //User update(UserDto userDto);
 }
